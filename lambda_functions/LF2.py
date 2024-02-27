@@ -121,13 +121,18 @@ def poll_sqs():
             message_attributes = message.get('MessageAttributes', {})
             for key, value in message_attributes.items():
                 print(f"Attribute {key}: {value['StringValue']}")
-
+    
+    #sqs.delete_message(
+     #           QueueUrl=sqs_url,
+     #           ReceiptHandle=message['ReceiptHandle']
+      #      )                
+    
     return sqs_message
 
 def send_email(recipient, body_text):
     
     # Specify email subject and body
-    subject = 'Yelp Restaurant Recommendation'
+    subject = 'Bitebot Restaurant Recommendations'
     
     # Send email
     try:
@@ -161,7 +166,7 @@ def construct_message_body(restaurants):
         formatted_details += f"Address: {restaurant.get('display_address', 'N/A')}\n"
         formatted_details += f"Cuisine: {restaurant.get('cuisine', 'N/A')}\n"
         formatted_details += f"Rating: {restaurant.get('rating', 'N/A')}\n"
-        formatted_details += "\n" 
+        formatted_details += "\n"  # Add a newline between restaurants
     return formatted_details
 
 
@@ -183,5 +188,37 @@ def lambda_handler(event, context):
  # Construct message body
  message = construct_message_body(restaurants)
  
+ # store for recomendations
+ store_info(email,cuisine)
+ 
  # Send the email and return the status
  return send_email(email,message)
+ 
+ 
+def store_info(email, cuisine):
+    #if not isinstance(email, str):
+    print(type(email))
+    print("casting email")
+    email_str = str(email)
+    print(type(email_str))
+    print("Email save:", email_str)
+    print("Cusine save", cuisine)
+    table_name = 'restaurant_state'
+    table = dynamodb.Table(table_name)
+    item = {
+        'email':  email_str,
+        'cuisine': cuisine
+    }
+    
+    try:
+        # Check if an item with the same email exists
+        response = table.get_item(Key={'email': email})
+        if 'Item' in response:
+            # If item exists, delete it
+            table.delete_item(Key={'email': email})
+            print("Existing item with email", email, "deleted.")
+        # Put item into DynamoDB table
+        table.put_item(TableName=table_name, Item=item)
+        print("Information stored successfully.")
+    except Exception as e:
+        print("Error storing information:", e)
