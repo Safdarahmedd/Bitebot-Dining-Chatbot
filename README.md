@@ -15,3 +15,7 @@ Dining Concierge Chatbot built as part of the course CS-GY 9223 Cloud Computing 
 6. Setup DynamoDB and ElasticSearch to query and serve the recommendations.
 7. Setup SQS for message passing between the services.
 8. Start sending messages to test the chatbot interaction.
+
+## UI ##
+<img src="https://github.com/Safdarahmedd/Bitebot-Dining-Chatbot/blob/main/Screenshots/Screenshot%202024-03-01%20at%203.46.36%E2%80%AFAM.png" alt="Chatbot UI" width="600"/>
+<img src="https://github.com/Safdarahmedd/Bitebot-Dining-Chatbot/blob/main/Screenshots/Screenshot%202024-03-01%20at%203.47.05%E2%80%AFAM.png" alt="Chatbot UI" width="600"/>
